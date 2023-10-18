@@ -1,0 +1,2 @@
+FADE_IN_MD = 0.5
+FADE_OUT_MD = 0.5
