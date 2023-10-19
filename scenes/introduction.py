@@ -98,7 +98,7 @@ class GradientDescentIntro(Scene):
         self.play(FadeOut(local_minima_surrounding_rectangle), run_time=1)
 
         gradient_surrounding_rectangle = SurroundingRectangle(
-            goal_text[3], color=YELLOW
+            goal_text[2], color=YELLOW
         )
         self.play(Create(gradient_surrounding_rectangle), run_time=1)
         self.play(FadeOut(gradient_surrounding_rectangle), run_time=2)
@@ -116,11 +116,149 @@ class GradientDescentIntro(Scene):
         self.wait()
 
 
-class GradientDescentDemo(Scene):
+class GradientDescentDemo(ThreeDScene):
     def construct(self):
-        f_text = Tex(r"$f(x) = x^4 - 4x^2 + 5$", font_size=42)
+        axes = ThreeDAxes()
+        x_label = axes.get_x_axis_label(Tex("x"))
+        y_label = axes.get_y_axis_label(Tex("y")).shift(UP * 1.8)
+        z_label = axes.get_z_axis_label(Tex("z")).shift(LEFT * 1.8)
 
-        self.wait()
+        self.set_camera_orientation(zoom=0.5)
+        self.move_camera(phi=75 * DEGREES, theta=30 * DEGREES, zoom=1)
+
+        f_text = Tex(r"$f(x) = x^4 - 4x^2 + 5$", font_size=42)
+        self.add_fixed_in_frame_mobjects(f_text)
+
+        # Write the text as an overlay in the 3D scene
+        self.play(Write(f_text))
+        self.play(Wait(3))
+        self.play(f_text.animate.to_corner(UL))
+
+        X_SCALE = 10
+        Y_SCALE = 10
+        self.play(FadeIn(axes), FadeIn(x_label), FadeIn(y_label), FadeIn(z_label))
+        f_surface = Surface(
+            lambda x, y: axes.c2p(
+                x * X_SCALE, y * Y_SCALE, np.sin(X_SCALE * x + Y_SCALE * y)
+            ),
+            resolution=(20, 20),
+            u_range=[-1, 1],
+            v_range=[-1, 1],
+        )
+        self.play(FadeIn(f_surface))
+
+        self.wait(5)
+
+
+class PreviousWork(Scene):
+    def construct(self):
+        algorithm_text = Tex(r"Algorithm", color=BLUE, font_size=DEFINITION_FONT_SIZE)
+        iteration_text = Tex(r"Iteration", color=BLUE, font_size=DEFINITION_FONT_SIZE)
+        oracle_text = Tex(r"Oracle", color=BLUE, font_size=DEFINITION_FONT_SIZE)
+
+        algorithm_definitions = [
+            ("Ge et al. [2015]", [r"O(poly(d/\epsilon))"], "Gradient"),
+            ("Levy [2016]", [r"O(d^3 \cdot poly(1 / \epsilon))"], "Gradient"),
+            (
+                r"\textbf{This Work}",
+                [r"\mathbf{O(", r"\log^4 (d)", r"/ \epsilon^2)}"],
+                "Gradient",
+            ),
+            (
+                "Argawal et al. [2016]",
+                [r"O(\log (d) / \epsilon^{7/4})"],
+                "Hessian-vector product",
+            ),
+            (
+                "Carmon et al. [2016]",
+                [r"O(\log (d) / \epsilon^{7/4})"],
+                "Hessian-vector product",
+            ),
+            (
+                "Carmon and Duchi [2016]",
+                [r"O(\log (d) / \epsilon^2)"],
+                "Hessian-vector product",
+            ),
+            (
+                "Nesterov and Polyak [2006]",
+                [r"O(1/\epsilon^{1.5})"],
+                "Hessian",
+            ),
+            (
+                "Curtis et al. [2014]",
+                [r"O(1/\epsilon^{1.5})"],
+                "Hessian",
+            ),
+        ]
+
+        # Make Tex objects from algorithms
+        algorithms = []
+        algorithms_grouped = []
+
+        for algorithm, iterations, oracle in algorithm_definitions:
+            elements = [
+                Tex(algorithm, font_size=DEFINITION_FONT_SIZE),
+                MathTex(*iterations, font_size=DEFINITION_FONT_SIZE),
+                Tex(oracle, font_size=DEFINITION_FONT_SIZE),
+            ]
+            algorithms += elements
+            algorithms_grouped += [elements]
+
+        group = VGroup(
+            algorithm_text, iteration_text, oracle_text, *algorithms
+        ).arrange_in_grid(cols=3, rows=1 + len(algorithm_definitions), buff=0.25)
+
+        self.play(
+            Write(algorithm_text, run_time=2),
+            Write(iteration_text, run_time=2),
+            Write(oracle_text, run_time=2),
+        )
+
+        self.wait(4)
+
+        def play_index(algorithm_index):
+            self.play(
+                Write(algorithms_grouped[algorithm_index][0], run_time=1),
+                Write(algorithms_grouped[algorithm_index][1], run_time=1),
+                Write(algorithms_grouped[algorithm_index][2], run_time=1),
+            )
+
+        play_index(0)
+        self.wait(2)
+
+        play_index(1)
+        self.wait(2)
+
+        play_index(5)
+        play_index(6)
+        self.wait(5)
+
+        play_index(3)
+        play_index(4)
+        self.wait(4)
+
+        # TODO: Add some visual details about the hessian vector product
+        play_index(2)
+        self.wait(4)
+
+        # Put a surrounding rectangle around the number of iterations
+        rectangle = SurroundingRectangle(algorithms_grouped[2][1][1], color=YELLOW)
+        self.play(Create(rectangle), run_time=1)
+        self.wait(5)
+
+        self.play(FadeOut(rectangle), run_time=1)
+        self.wait(1)
+
+        # Highlight the rows for this work and the Carmon and Duchi paper
+        self.play(
+            algorithms_grouped[2][0].animate.set_color(GREEN),
+            algorithms_grouped[2][1].animate.set_color(GREEN),
+            algorithms_grouped[2][2].animate.set_color(GREEN),
+            algorithms_grouped[5][0].animate.set_color(GREEN),
+            algorithms_grouped[5][1].animate.set_color(GREEN),
+            algorithms_grouped[5][2].animate.set_color(GREEN),
+        )
+        self.wait(4)
 
 
 class Outline(Scene):
@@ -147,6 +285,19 @@ class Outline(Scene):
                 self.play(sections[0].animate.set_color(YELLOW))
                 self.play(Wait(3))
 
+        self.wait(5)
+
+        # Make a surrounding rectangle for the Background section
+        background_surrounding_rectangle = SurroundingRectangle(
+            sections[1], color=YELLOW
+        )
+
+        self.play(Write(background_surrounding_rectangle), run_time=1)
+        self.play(
+            sections[1].animate.set_color(YELLOW), sections[0].animate.set_color(WHITE)
+        )
+        self.play(FadeOut(background_surrounding_rectangle), run_time=1)
+
         self.wait()
 
 
@@ -157,7 +308,10 @@ class Introduction(Scene):
         GradientDescentIntro.construct(self)
 
         self.clear()
-        GradientDescentDemo.construct(self)
+        GradientDescentDemo().construct()
+
+        self.clear()
+        PreviousWork.construct(self)
 
         self.clear()
         Outline.construct(self)
