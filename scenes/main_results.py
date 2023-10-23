@@ -1,5 +1,5 @@
 from manim import *
-from manim_slides.slide import Slide
+from manim_slides.slide import Slide, ThreeDSlide
 from shared import *
 
 
@@ -165,4 +165,70 @@ class PGD(Slide):
             pertubation_line_2[1].animate.set_color(GREEN),
             run_time=2,
         )
+        self.next_slide()
+
+
+class Theorem3(Slide):
+    """
+    State that from here on out, we assume that f is l-smooth and rho-hessian lipschitz.
+
+    State theorem 3, and highlight the difference parts of the term (original and new log factor).
+
+    Argue that
+    """
+
+    def construct(self):
+        self.next_slide()
+
+
+class Theorem3ProofSketch(Slide):
+    """
+    Give the theorem proof sketch, with different cases for
+
+    End with statement of lemma 10.
+    """
+
+    def construct(self):
+        self.next_slide()
+
+
+class PertubationBall(ThreeDSlide):
+    """
+    Give the pertubation ball visual, and results from the appendix for the integral and why it must be bounded in this way.
+
+    This is a proof sketch of lemma 10.
+    """
+
+    def construct(self):
+        self.next_slide()
+
+
+class Theorem3Conclusion(Slide):
+    """
+    Bring the results together from the pertubation example to conclude that theorem 3 is correct.
+    """
+
+    def construct(self):
+        self.next_slide()
+
+
+class Corollary4(Slide):
+    """
+    Explain the strict saddle point assumption, the 3 possible cases, and why selecting values tells us that when PGD terminats,
+    we must be at a local minimum specifically.
+    """
+
+    def construct(self):
+        self.next_slide()
+
+
+class LocalStructure(Slide):
+
+    """
+    Briefly mention that if we have slightly stronger local structure assumptions, we can get a stronger result.
+
+    By just running PGD and then running a fixed gradient descent afterwards (no proofs).
+    """
+
+    def construct(self):
         self.next_slide()
