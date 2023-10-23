@@ -3,6 +3,7 @@
 from manim import *
 from manim_slides.slide import Slide, ThreeDSlide
 from constants import *
+from shared import *
 
 
 class Opening(Slide):
@@ -147,6 +148,141 @@ class GradientDescentDemo(ThreeDSlide):
         )
         self.play(FadeIn(f_surface))
 
+        self.next_slide()
+
+
+class Algorithms(Slide):
+    def construct(self):
+        INDENT_WIDTH = 0.5
+        # Give the original gradient descent algorithm
+        algorithm_name = Tex(r"\textbf{Gradient Descent}", color=BLUE)
+
+        self.play(Write(algorithm_name, run_time=2))
+        self.play(algorithm_name.animate.to_corner(UL), run_time=2)
+        self.next_slide()
+
+        gradient_loop = (
+            Tex(r"While not converged, do:")
+            .next_to(algorithm_name, DOWN)
+            .align_to(algorithm_name, LEFT)
+        )
+
+        gradient_iteration = (
+            MathTex(r"x_{t+1} = x_t - \eta \nabla f(x_t)")
+            .next_to(gradient_loop, DOWN)
+            .align_to(gradient_loop, LEFT)
+            .shift(RIGHT * INDENT_WIDTH)
+        )
+
+        self.play(Write(gradient_loop, run_time=2))
+        self.play(Write(gradient_iteration, run_time=2))
+
+        self.next_slide()
+
+        perturbed_gradient_name = (
+            Tex(r"\textbf{Perturbed Gradient Descent}", color=BLUE)
+            .align_to((-0.3, 0, 0), LEFT)
+            .align_to(algorithm_name, UP)
+        )
+
+        self.play(Write(perturbed_gradient_name, run_time=2))
+        self.next_slide()
+
+        perturbed_gradient_loop = (
+            gradient_loop.copy()
+            .next_to(perturbed_gradient_name, DOWN)
+            .align_to(perturbed_gradient_name, LEFT)
+        )
+
+        perturbation_condition = (
+            Tex(r"If \textbf{pertubation condition}:", color=GREEN)
+            .next_to(perturbed_gradient_loop, DOWN)
+            .align_to(perturbed_gradient_loop, LEFT)
+            .shift(RIGHT * INDENT_WIDTH)
+        )
+
+        pertubation_prep = MathTex(r"\xi_t \leftarrow \mathbb{B}_0(r)", color=GREEN)
+        pertubation_step = MathTex(r"x_{t+1} = x_t + \xi_t", color=GREEN)
+        pertubation_group = (
+            VGroup(pertubation_prep, pertubation_step)
+            .arrange(DOWN, center=False, aligned_edge=LEFT)
+            .next_to(perturbation_condition, DOWN)
+            .align_to(perturbation_condition, LEFT)
+            .shift(RIGHT * INDENT_WIDTH)
+        )
+
+        perturbed_gradient_iteration = (
+            gradient_iteration.copy()
+            .next_to(pertubation_group, DOWN)
+            .align_to(perturbation_condition, LEFT)
+        )
+
+        self.play(
+            Write(perturbed_gradient_loop, run_time=2),
+            Write(perturbed_gradient_iteration, run_time=2),
+        )
+        self.next_slide()
+
+        self.play(Write(perturbation_condition, run_time=2))
+        self.play(Write(pertubation_group, run_time=2))
+        self.next_slide()
+
+        non_convex_text = (
+            Tex(
+                r"For non-convex functions $f: \mathbb{R}^d \to \mathbb{R}$:",
+                color=YELLOW,
+            )
+            .next_to(perturbed_gradient_iteration, DOWN)
+            .align_to(algorithm_name, LEFT)
+        )
+
+        self.play(Write(non_convex_text, run_time=2))
+        self.next_slide()
+
+        gradient_result = (
+            Tex(r"$\epsilon$-second-order \\ stationary point")
+            .next_to(non_convex_text, DOWN)
+            .shift(LEFT * 2)
+            .shift(DOWN * 0.5)
+        )
+        gradient_result_rectangle = rectangle_around(gradient_result, YELLOW)
+
+        self.play(
+            Write(gradient_result, run_time=2),
+            Create(gradient_result_rectangle, run_time=2),
+        )
+        self.next_slide()
+
+        perturbed_result = (
+            Tex("Local Minima").next_to(gradient_result, RIGHT).shift(RIGHT * 6)
+        )
+        perturbed_result_rectangle = rectangle_around(perturbed_result, GREEN)
+
+        self.play(
+            Write(perturbed_result, run_time=2),
+            Create(perturbed_result_rectangle, run_time=2),
+        )
+        self.next_slide()
+
+        arrow = Arrow(
+            gradient_result_rectangle.get_right(),
+            perturbed_result_rectangle.get_left(),
+            color=WHITE,
+        )
+        arrow_above = Tex(r"$\rho$-Hessian Lipschitz").next_to(arrow, UP)
+        arrow_below = Tex(r"$(\theta, \gamma, \zeta)-$strict Saddle").next_to(
+            arrow, DOWN
+        )
+
+        self.play(Create(arrow), run_time=2)
+        self.play(Write(arrow_above), Write(arrow_below), run_time=2)
+        self.next_slide()
+
+        overhead = Tex(r"$O(\log^4(k))$ overhead", color=GREEN).next_to(
+            perturbed_result_rectangle, DOWN
+        )
+
+        self.play(Write(overhead), run_time=2)
         self.next_slide()
 
 

@@ -169,7 +169,8 @@ class LSG(Slide):
 
         theorem_1_text = (
             Tex(
-                r"For $f$ $l$-smooth and $\alpha$-strongly convex, gradient descent will be $\epsilon$-close to the optimal solution in iterations:"
+                r"For $f$ $l$-smooth and $\alpha$-strongly convex, gradient descent will be $\epsilon$-close to the optimal solution in iterations:",
+                tex_environment=None,
             )
             .next_to(theorem_1_header, DOWN, buff=0.5)
             .align_to(theorem_1_header, LEFT)
@@ -231,7 +232,7 @@ class GoldStandard(Slide):
         theorem_2 = get_definition("Gold Standard", "Theorem 2")
 
         theorem_2_statement = Tex(
-            r"For $f()$ ",
+            r"For $f: \mathbb{R}^d \to \mathbb{R}$ ",
             "$l$-smooth"
             r"""
             , and some $\epsilon > 0$, gradient descent with $\eta = \frac{1}{l}$ will find an $\epsilon$-first order stationary point in iterations:

@@ -1,5 +1,5 @@
 # Renders the entire presentation and plays it using manim-slides
-introduction_scenes=("Opening" "GradientDescentIntro" "GradientDescentDemo" "PreviousWork" "Outline")
+introduction_scenes=("Opening" "GradientDescentIntro" "GradientDescentDemo" "Algorithms" "PreviousWork" "Outline")
 background_scenes=("Notation" "LSG" "GoldStandard" "HessianLipschitz" "Goal")
 
 for scene in ${!introduction_scenes[@]}; do
