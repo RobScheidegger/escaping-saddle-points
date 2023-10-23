@@ -36,3 +36,40 @@ def render_outline(self: Slide, old_section: str, new_section: str):
     """
     Re
     """
+    title = Tex(r"Outline", color=BLUE, font_size=HEADER_FONT_SIZE)
+
+    section_names = ["Introduction", "Background", "Main Results", "Takeaways"]
+    sections = [
+        Tex(str(i + 1) + ". " + name, font_size=HEADER_FONT_SIZE)
+        for i, name in enumerate(section_names)
+    ]
+
+    old_section_index = section_names.index(old_section)
+    new_section_index = section_names.index(new_section)
+
+    sections[old_section_index].set_color(YELLOW)
+
+    group = VGroup(*([title] + sections)).to_edge(LEFT).to_edge(UP)
+
+    group.arrange(DOWN, center=False, aligned_edge=LEFT, buff=1)
+
+    self.play(Write(group, run_time=2))
+    self.next_slide()
+
+    # Make a surrounding rectangle for the Background section
+    surrounding_rectangle = SurroundingRectangle(
+        sections[new_section_index], color=YELLOW, buff=0.5
+    )
+
+    self.play(Write(surrounding_rectangle), run_time=1)
+    self.play(
+        sections[new_section_index].animate.set_color(YELLOW),
+        sections[old_section_index].animate.set_color(WHITE),
+        run_time=2,
+    )
+
+    self.play(FadeOut(surrounding_rectangle), run_time=1)
+    self.next_slide()
+
+    # Fade everything out
+    self.play(FadeOut(group), FadeOut(title), run_time=2)
