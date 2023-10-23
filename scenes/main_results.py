@@ -341,6 +341,47 @@ class Theorem3ProofSketch(Slide):
         )
         self.next_slide()
 
+        saddle_idea = (
+            Tex(
+                r"Idea: When adding pertubation $\eta_t \leftarrow \mathbb{B}_0(r)$, we want to \textit{make progress away from the saddle point} with high probability.",
+                tex_environment=None,
+            )
+            .next_to(cases_2, DOWN, buff=0.25)
+            .align_to(cases_2, LEFT)
+        )
+
+        self.play(Write(saddle_idea), run_time=2)
+        self.next_slide()
+
+        ball_idea = (
+            Tex(
+                r"Treat the pertubation as a $d$-dimensional \textbf{pertubation ball} $\mathbb{B}_{\mathbf{x}}(r)$.\\",
+                r"Separate the volume into two regions: $\chi_{stuck}, \chi_{escape}$.\\",
+                r"As long as we can get out of $\chi_{stuck}$ with high probability, then we can escape the saddle point efficiently!",
+                tex_environment=None,
+                color=GREEN,
+            )
+            .next_to(saddle_idea, DOWN, buff=0.25)
+            .align_to(saddle_idea, LEFT)
+        )
+
+        self.play(Write(ball_idea[0]), run_time=2)
+        self.play(Write(ball_idea[1]), run_time=2)
+        self.play(Write(ball_idea[2]), run_time=2)
+        self.next_slide()
+
+        lemma_11 = (
+            Tex(
+                r"\textbf{Lemma (Paraphrase)}. The region of $\chi_{stuck}$ has ``width'' bounded by $\frac{\delta r}{2 \sqrt{d}}$.",
+                tex_environment=None,
+                color=BLUE,
+            )
+            .next_to(ball_idea, DOWN, buff=0.25)
+            .align_to(ball_idea, LEFT)
+        )
+        self.play(Write(lemma_11), run_time=2)
+        self.next_slide()
+
 
 class PertubationBall(ThreeDSlide):
     """
@@ -350,6 +391,118 @@ class PertubationBall(ThreeDSlide):
     """
 
     def construct(self):
+        BALL_RADIUS = 2
+
+        axes = ThreeDAxes()
+        x_0 = Dot3D(
+            radius=0.1,
+            color=BLUE,
+        ).move_to(ORIGIN)
+
+        self.set_camera_orientation(zoom=0.5)
+        self.move_camera(phi=75 * DEGREES, theta=30 * DEGREES, zoom=1)
+
+        x_0_label = MathTex(r"\mathbf{x_0}").next_to(x_0, DOWN, buff=0.25)
+
+        self.play(Create(x_0))
+        self.add_fixed_orientation_mobjects(x_0_label)
+        self.next_slide()
+
+        ball = Sphere(
+            radius=BALL_RADIUS, color=BLUE, resolution=(20, 20), fill_opacity=0.15
+        )
+        self.play(Create(ball), run_time=2)
+        self.begin_ambient_camera_rotation(rate=0.15)
+        self.wait(5)
+
+        stuck_surface_bottom = Surface(
+            lambda theta, r: axes.c2p(
+                r * np.cos(theta),
+                r * np.sin(theta),
+                0.5 * np.sin(theta) - 0.1,
+            ),
+            resolution=(20, 20),
+            u_range=[0, 2 * PI],
+            v_range=[0, BALL_RADIUS],
+            fill_opacity=0.2,
+            fill_color=RED,
+            color=RED,
+        )
+
+        stuck_surface_top = stuck_surface_bottom.copy().shift(OUT * 0.2)
+        self.play(Create(stuck_surface_bottom), Create(stuck_surface_top), run_time=3)
+        self.wait(5)
+
+        self.stop_ambient_camera_rotation()
+        self.next_slide()
+
+
+class PertubationBallProof(Slide):
+    def construct(self):
+        bound = Tex("Bounding the Stuck Region", color=BLUE).to_corner(UL)
+        self.play(Write(bound), run_time=2)
+        self.next_slide()
+
+        vol_1 = MathTex(
+            r"\text{Vol}(\chi_{stuck})",
+            r"=",
+            r"\int_{\mathbb{B}_{\tilde{\mathbf{x}}}^{(d)}(r)} d\mathbf{x} \cdot ",
+            r"I_{\chi_{stuck}}(\mathbf{x})",
+        )
+
+        self.play(Write(vol_1))
+        self.next_slide()
+
+        # Put a surrounding rectangle around the last term
+        vol_1_rect = SurroundingRectangle(vol_1[3], color=YELLOW)
+        self.play(Create(vol_1_rect), run_time=1)
+        self.next_slide()
+        self.play(FadeOut(vol_1_rect), run_time=1)
+        self.next_slide()
+
+        vol_2 = MathTex(
+            r"\text{Vol}(\chi_{stuck})",
+            r"=",
+            r"\int_{\mathbb{B}_{\tilde{\mathbf{x}}}^{(d-1)}(r)} d\mathbf{x}^{(-1)} \cdot ",
+            r"\left(\text{dimension d component of } I_{\chi_{stuck}}(\mathbf{x})\right)",
+        )
+        self.play(vol_1.animate.become(vol_2), run_time=2)
+        self.next_slide()
+
+        vol_3 = MathTex(
+            r"\text{Vol}(\chi_{stuck})",
+            r"\leq",
+            r"\int_{\mathbb{B}_{\tilde{\mathbf{x}}}^{(d-1)}(r)} d\mathbf{x}^{(-1)} \cdot ",
+            r"\frac{\delta r}{\sqrt{d}}",
+        )
+        self.play(vol_1.animate.become(vol_3), run_time=2)
+        self.next_slide()
+
+        vol_4 = MathTex(
+            r"\text{Vol}(\chi_{stuck})",
+            r"\leq",
+            r"\text{Vol}(\mathbb{B}_0^{(d-1)}(r)) \times ",
+            r"\frac{\delta r}{\sqrt{d}}",
+        )
+        self.play(vol_1.animate.become(vol_4))
+        self.next_slide()
+
+        probability = MathTex(
+            r"P(\text{escape}) = 1 - \frac{\text{Vol}(\chi_{stuck})}{\text{Vol}(\mathbb{B}_{\tilde{\mathbf{x}}}^{(d)}(r))} \geq 1 - \delta \left( \frac{r}{\sqrt{d}} \frac{\text{Vol}(\mathbb{B}_0^{(d-1)}(r))}{\text{Vol}(\mathbb{B}_0^{(d)}(r))}\right) \geq",
+            r"1 - \delta",
+        ).next_to(vol_1, DOWN, buff=0.25)
+
+        self.play(Write(probability), run_time=2)
+        self.next_slide()
+
+        # Put a brace around the 1 - delta
+        probability_brace = Brace(probability[1], DOWN, color=GREEN)
+        probability_brace_text = Tex(
+            r"Escape $\chi_{stuck}$ with \\high probability!",
+            color=GREEN,
+        ).next_to(probability_brace, DOWN, buff=0.25)
+
+        self.play(Write(probability_brace), Write(probability_brace_text), run_time=2)
         self.next_slide()
 
 
@@ -359,6 +512,59 @@ class Theorem3Conclusion(Slide):
     """
 
     def construct(self):
+        INDENT_WIDTH = 0.5
+
+        header = Tex(r"Theorem 3 (Intuition)", color=BLUE).to_corner(UL)
+        self.play(Write(header))
+        self.next_slide()
+
+        cases_header = (
+            Tex(
+                r"For iterate $\mathbf{x_t}$, if we have not converged, then either:",
+                tex_environment=None,
+            )
+            .next_to(header, DOWN, buff=0.25)
+            .align_to(header, LEFT)
+        )
+
+        cases_1 = (
+            Tex(
+                r"(1) the gradient $\nabla f(\mathbf{x_t})$ is large $\checkmark$",
+                tex_environment=None,
+                color=GREEN,
+            )
+            .next_to(cases_header, DOWN, buff=0.25)
+            .align_to(cases_header, LEFT)
+            .shift(RIGHT * INDENT_WIDTH)
+        )
+        cases_2 = (
+            Tex(
+                r"(2) the Hessian $\nabla^2 f(\mathbf{x_t})$ has a significant negative eigenvalue",
+                tex_environment=None,
+            )
+            .next_to(cases_1, DOWN, buff=0.25)
+            .align_to(cases_1, LEFT)
+        )
+        self.play(Write(cases_header), Write(cases_1), Write(cases_2), run_time=1)
+        self.next_slide()
+
+        checkmark_2 = Tex(r"$\checkmark$", color=GREEN).next_to(
+            cases_2, RIGHT, buff=0.25
+        )
+
+        self.play(Write(checkmark_2), cases_2.animate.set_color(GREEN), run_time=2)
+        self.next_slide()
+
+        conclusion = (
+            Tex(
+                r"PGD can find an $\epsilon$-second-order stationary point with only $\tilde{O}(\log^4 (d))$ overhead!",
+                color=YELLOW,
+                tex_environment=None,
+            )
+            .next_to(cases_2, DOWN, buff=2)
+            .align_to(cases_2, LEFT)
+        )
+        self.play(Write(conclusion), run_time=2)
         self.next_slide()
 
 
@@ -370,20 +576,66 @@ class Corollary4(Slide):
 
     def construct(self):
         leading_question = Tex(
-            r"Can we do better? Find a local \textit{local minimum}?", color=BLUE
+            r"\textbf{Can we do better? Find a local \textit{local minimum}?}",
+            color=BLUE,
         ).to_corner(UL)
 
         self.play(Write(leading_question))
         self.next_slide()
 
+        strict_saddle = (
+            Tex("Definition (Strict Saddle). ", color=BLUE)
+            .next_to(leading_question, DOWN, buff=0.25)
+            .align_to(leading_question, LEFT)
+        )
+        self.play(Write(strict_saddle))
+        self.next_slide()
 
-class LocalStructure(Slide):
+        strict_saddle_def = (
+            Tex(
+                r"A function $f$ is $(\theta, \gamma, \zeta)$-strict saddle if for any $\mathbf{x}$, one of the following holds:",
+                tex_environment=None,
+            )
+            .next_to(strict_saddle, DOWN, buff=0.25)
+            .align_to(strict_saddle, LEFT)
+        )
+        self.play(Write(strict_saddle_def))
 
-    """
-    Briefly mention that if we have slightly stronger local structure assumptions, we can get a stronger result.
+        options = MathTex(
+            r"||\nabla f(\mathbf{x})|| \geq \theta",
+            r",",
+            r"\lambda_{min}(\nabla^2 f(\mathbf(x))) \leq -\gamma",
+            r",",
+            r"\mathbf{x} \text{ is } \zeta-\text{close to } \chi^*",
+            tex_environment="equation*",
+        ).next_to(strict_saddle_def, DOWN, buff=0.25)
 
-    By just running PGD and then running a fixed gradient descent afterwards (no proofs).
-    """
+        self.play(Write(options))
+        self.next_slide()
 
-    def construct(self):
+        pgd_group = VGroup(options[0], options[2])
+        # Put a brace around the group
+        pgd_brace = Brace(pgd_group, DOWN, color=YELLOW)
+        pgd_brace_text = Tex(
+            r"Can choose $\theta, \gamma$ such that \\ PGD terminates with these false.",
+            color=YELLOW,
+        ).next_to(pgd_brace, DOWN, buff=0.25)
+
+        self.play(Write(pgd_brace), Write(pgd_brace_text))
+        self.next_slide()
+
+        # put a brace around the last option and say "must be true at \\ end of PGD!"
+        last_brace = Brace(options[4], DOWN, color=GREEN)
+        last_brace_text = Tex(r"Must be true \\at end of PGD!", color=GREEN).next_to(
+            last_brace, DOWN, buff=0.25
+        )
+
+        self.play(Write(last_brace), Write(last_brace_text))
+        self.next_slide()
+
+        final_result = Tex(
+            r"\textbf{Strict Saddle} $\implies$ \textbf{PGD finds \textit{Local Minimum}}!", color=GREEN
+        ).move_to((0, -2, 0))
+        
+        self.play(Write(final_result))
         self.next_slide()
