@@ -73,3 +73,7 @@ def render_outline(self: Slide, old_section: str, new_section: str):
 
     # Fade everything out
     self.play(FadeOut(group), FadeOut(title), run_time=2)
+
+
+def place_below(mobject, below_mobject, buff=0.5):
+    return mobject.next_to(below_mobject, DOWN, buff=buff).align_to(below_mobject, LEFT)

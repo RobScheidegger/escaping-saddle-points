@@ -2,6 +2,9 @@ from manim import *
 from manim_slides.slide import Slide, ThreeDSlide
 from shared import *
 
+Tex.set_default(font_size=36)
+MathTex.set_default(font_size=36)
+
 
 class Transition(Slide):
     def construct(self):
@@ -159,6 +162,14 @@ class PGD(Slide):
         self.play(Write(gradient_brace), Write(gradient_brace_text), run_time=2)
         self.next_slide()
 
+        question = (
+            Tex(r"\textbf{Does it still converge?}", color=GREEN)
+            .next_to(descent, DOWN, buff=0.25)
+            .align_to(title, LEFT)
+        )
+        self.play(Write(question), run_time=2)
+        self.next_slide()
+
         ball_box = SurroundingRectangle(pertubation_line_2[1], color=GREEN)
         self.play(
             Create(ball_box),
@@ -178,6 +189,52 @@ class Theorem3(Slide):
     """
 
     def construct(self):
+        theorem_3_title = Tex(
+            r"Theorem 3 (PGD $\epsilon$-stationary)", color=BLUE
+        ).to_corner(UL)
+        self.play(Write(theorem_3_title))
+        self.next_slide()
+
+        theorem_3_statement = Tex(
+            r"""
+            For $f: \mathbb{R}^2 \to \mathbb{R}$ $\ell$-smooth and $\rho$-Hessian Lipschitz, 
+            then we can choose $\delta, \epsilon, \Delta_f, c$ such that $PGD(\mathbf{x_0}, \ell, \rho, \epsilon, c, \delta, \Delta_f)$ finds a
+            $\epsilon$-second-order stationary point with probability $1 - \delta$ in iterations:
+            """,
+            tex_environment=None,
+        )
+
+        place_below(theorem_3_statement, theorem_3_title)
+
+        self.play(Write(theorem_3_statement), run_time=3)
+        self.next_slide()
+
+        theorem_3_iterations = MathTex(
+            r"O \left( ",
+            r"\frac{\ell (f(\mathbf{x_0}) - f^*)}{\epsilon^2}",
+            r"\log^4 \frac{d \ell \Delta_f}{\epsilon^2 \delta}",
+            r" \right)",
+        ).next_to(theorem_3_statement, DOWN, buff=0.25)
+
+        self.play(Write(theorem_3_iterations), run_time=2)
+        self.next_slide()
+
+        # Place a bracket around the gold standard runtime
+        gold_standard_bracket = Brace(theorem_3_iterations[1], DOWN, color=YELLOW)
+        gold_standard_text = Tex("\textbf{Gold Standard}", color=YELLOW).next_to(
+            gold_standard_bracket, DOWN, buff=0.25
+        )
+
+        self.play(Write(gold_standard_bracket), Write(gold_standard_text), run_time=2)
+        self.next_slide()
+
+        # Place another bracket around the new log factor
+        new_log_factor_bracket = Brace(theorem_3_iterations[2], DOWN, color=GREEN)
+        new_log_factor_text = Tex("\textbf{New Log Factor}", color=GREEN).next_to(
+            new_log_factor_bracket, DOWN, buff=0.25
+        )
+
+        self.play(Write(new_log_factor_bracket), Write(new_log_factor_text), run_time=2)
         self.next_slide()
 
 
@@ -189,6 +246,99 @@ class Theorem3ProofSketch(Slide):
     """
 
     def construct(self):
+        INDENT_WIDTH = 0.5
+
+        header = Tex(r"Theorem 3 (Intuition)", color=BLUE).to_corner(UL)
+        self.play(Write(header))
+        self.next_slide()
+
+        cases_header = (
+            Tex(
+                r"For iterate $\mathbf{x_t}$, if we have not converged, then either:",
+                tex_environment=None,
+            )
+            .next_to(header, DOWN, buff=0.25)
+            .align_to(header, LEFT)
+        )
+
+        cases_1 = (
+            Tex(
+                r"(1) the gradient $\nabla f(\mathbf{x_t})$ is large",
+                tex_environment=None,
+            )
+            .next_to(cases_header, DOWN, buff=0.25)
+            .align_to(cases_header, LEFT)
+            .shift(RIGHT * INDENT_WIDTH)
+        )
+        cases_2 = (
+            Tex(
+                r"(2) the Hessian $\nabla^2 f(\mathbf{x_t})$ has a significant negative eigenvalue",
+                tex_environment=None,
+            )
+            .next_to(cases_1, DOWN, buff=0.25)
+            .align_to(cases_1, LEFT)
+        )
+
+        self.play(Write(cases_header))
+        self.next_slide()
+
+        self.play(Write(cases_1))
+        self.next_slide()
+
+        self.play(Write(cases_2))
+        self.next_slide()
+
+        self.play(cases_2.animate.to_edge(DOWN), run_time=2)
+
+        lemma_9 = (
+            Tex(
+                r"\textbf{Lemma.} For every iteration gradient descent with stepsize $\eta < \frac{1}{\ell}$:",
+                tex_environment=None,
+                color=GREEN,
+            )
+            .next_to(cases_1, DOWN, buff=0.25)
+            .align_to(cases_1, LEFT)
+        )
+        self.play(Write(lemma_9))
+        self.next_slide()
+
+        lemma_9_proof = (
+            MathTex(
+                r"""
+            f(\mathbf{x_{t+1}}) &\leq f(\mathbf{x_t}) + \nabla f(\mathbf{x_t})^T (\mathbf{x_{t+1}} - \mathbf{x_t}) + \frac{\ell}{2} ||\mathbf{x_{t+1}} - \mathbf{x_t}|| \\
+                &= f(\mathbf{x_t}) - \eta || \nabla f(\mathbf{x_t})||^2 + \frac{\eta^2 \ell}{2} || \nabla f(\mathbf{x_t})||^2 \\
+                &\leq f(\mathbf{x_t}) - \frac{\eta}{2}||\nabla f(\mathbf{x_t})||^2
+            """,
+                tex_environment="align",
+            )
+            .next_to(lemma_9, DOWN, buff=0.25)
+            .center()
+        )
+        self.play(Write(lemma_9_proof), run_time=2)
+        self.next_slide()
+
+        progress = Tex(
+            r"\textbf{Makes progress in function value!}", color=GREEN
+        ).next_to(lemma_9_proof, DOWN, buff=0.25)
+        self.play(Write(progress))
+        self.next_slide()
+
+        checkmark_1 = Tex(r"$\checkmark$", color=GREEN).next_to(
+            cases_1, RIGHT, buff=0.25
+        )
+
+        self.play(
+            FadeOut(lemma_9),
+            FadeOut(lemma_9_proof),
+            FadeOut(progress),
+            Write(checkmark_1),
+            cases_1.animate.set_color(GREEN),
+            run_time=2,
+        )
+        self.play(
+            cases_2.animate.next_to(cases_1, DOWN, buff=0.25).align_to(cases_1, LEFT),
+            run_time=2,
+        )
         self.next_slide()
 
 
@@ -219,6 +369,11 @@ class Corollary4(Slide):
     """
 
     def construct(self):
+        leading_question = Tex(
+            r"Can we do better? Find a local \textit{local minimum}?", color=BLUE
+        ).to_corner(UL)
+
+        self.play(Write(leading_question))
         self.next_slide()
 
 
