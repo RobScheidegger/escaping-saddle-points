@@ -71,7 +71,7 @@ class LSG(Slide):
         """
         Slides for both l-gradient lipschitz and strongly convex.
         """
-        l_definition = get_definition("$l$-gradient Lipschitz")
+        l_definition = get_definition(r"$\ell$-gradient Lipschitz")
 
         self.play(Write(l_definition, run_time=2))
         self.next_slide()
@@ -80,7 +80,7 @@ class LSG(Slide):
         self.next_slide()
 
         l_text = (
-            Tex(r"A differentiable function $f$ is $l$-gradient Lipschitz if")
+            Tex(r"A differentiable function $f$ is $\ell$-gradient Lipschitz if")
             .next_to(l_definition, DOWN, buff=0.5)
             .align_to(l_definition, LEFT)
         )
@@ -337,18 +337,127 @@ class HessianLipschitz(Slide):
         self.play(Write(hessian_equation, run_time=2))
         self.next_slide()
 
+        epsilon_second_order_stationary = Tex(
+            r"For such a point, we say that $\mathbf{x}$ is an $\epsilon$-second order stationary point if it is an $\epsilon$-first order stationary point and",
+            tex_environment=None,
+        ).next_to(hessian_equation, DOWN, buff=0.5)
+        stationary_math = MathTex(
+            r"\lambda_{min}(\nabla^2 f(\mathbf{x})) \geq -\sqrt{\rho\epsilon}"
+        ).next_to(epsilon_second_order_stationary, DOWN, buff=0.5)
 
-class Goal(Slide):
-    """
-    Slide for for showing a diagram of the
-    """
+        self.play(Write(epsilon_second_order_stationary, run_time=2))
+        self.play(Write(stationary_math, run_time=2))
+        self.next_slide()
 
-    def construct(self):
+        # Make a brace to the right saying "Weaker than convexity"
+        weaker_than_convexity_brace = Brace(stationary_math, RIGHT, color=YELLOW)
+        weaker_than_convexity_text = Tex(
+            r"Weaker than convexity!", color=YELLOW
+        ).next_to(weaker_than_convexity_brace, RIGHT)
+
+        self.play(
+            Write(weaker_than_convexity_brace, run_time=1),
+            Write(weaker_than_convexity_text, run_time=1),
+        )
         self.next_slide()
 
 
-class Background(Scene):
-    def construct(self):
-        Notation.construct(self)
+class Goal(Slide):
+    """
+    Slide for for showing a diagram of the different assumptions an implications
+    """
 
-        self.wait()
+    def construct(self):
+        l_smooth = Tex(r"$\mathbf{\ell}$\textbf{-smooth}").move_to((-4.5, 2, 0))
+        l_smooth_circle = ellipse_around(l_smooth, YELLOW)
+
+        self.play(Write(l_smooth, run_time=1), Create(l_smooth_circle, run_time=1))
+        self.next_slide()
+
+        # Show Theorem 2
+
+        theorem_2 = Tex(
+            r"\textbf{Convergence}:\\",
+            r"$\frac{\ell(f(\mathbf{x_0}) - f^*)}{\epsilon^2}$",
+        ).move_to((-4.5, -2, 0))
+        theorem_2_rectangle = rectangle_around(theorem_2, BLUE)
+        theorem_2_arrow = Line(
+            l_smooth_circle.get_bottom(),
+            theorem_2_rectangle.get_top(),
+        )
+
+        self.play(
+            Write(theorem_2, run_time=1),
+            Create(theorem_2_rectangle, run_time=1),
+            Create(theorem_2_arrow, run_time=1),
+        )
+        self.next_slide()
+
+        strongly_convex = Tex(r"$\mathbf{\alpha}$\textbf{-strongly convex}").move_to(
+            (4.5, 2, 0)
+        )
+        strongly_convex_circle = ellipse_around(strongly_convex, YELLOW)
+
+        self.play(
+            Write(strongly_convex, run_time=1),
+            Create(strongly_convex_circle, run_time=1),
+        )
+        self.next_slide()
+
+        theorem_1 = Tex(
+            r"\textbf{Convergence}:\\",
+            r"$\frac{2\ell}{\alpha} \log \frac{||x_0 - x^*||}{\epsilon}$",
+        ).move_to((4.5, -2, 0))
+        theorem_1_rectangle = rectangle_around(theorem_1, BLUE)
+        theorem_1_arrow_1 = Line(
+            strongly_convex_circle.get_bottom(),
+            theorem_1_rectangle.get_top(),
+        )
+        theorem_1_arrow_2 = Line(
+            l_smooth_circle.get_bottom(),
+            theorem_1_rectangle.get_top(),
+        )
+
+        self.play(
+            Write(theorem_1, run_time=1),
+            Create(theorem_1_rectangle, run_time=1),
+            Create(theorem_1_arrow_1, run_time=1),
+            Create(theorem_1_arrow_2, run_time=1),
+        )
+        self.next_slide()
+
+        hessian_lipschitz = Tex(r"$\mathbf{\rho}$\textbf{-Hessian Lipschitz}").move_to(
+            (0, 2, 0)
+        )
+        hessian_lipschitz_circle = ellipse_around(hessian_lipschitz, GREEN)
+
+        self.play(
+            Write(hessian_lipschitz, run_time=1),
+            Create(hessian_lipschitz_circle, run_time=1),
+        )
+        self.next_slide()
+
+        main_theorem = Tex(
+            r"\textbf{Convergence}:\\ $O\left (\log^4(d) \frac{\ell(f(x_0) - f^*)}{\epsilon^2} \right )$",
+            font_size=DEFINITION_FONT_SIZE,
+        ).move_to((0, -2, 0))
+        main_theorem_rectangle = rectangle_around(main_theorem, GREEN)
+
+        main_theorem_line_1 = Line(
+            hessian_lipschitz_circle.get_bottom(),
+            main_theorem_rectangle.get_top(),
+        )
+        main_theorem_line_2 = Line(
+            l_smooth_circle.get_bottom(),
+            main_theorem_rectangle.get_top(),
+        )
+
+        self.play(
+            Write(main_theorem, run_time=1),
+            Create(main_theorem_rectangle, run_time=1),
+            Create(main_theorem_line_1, run_time=1),
+            Create(main_theorem_line_2, run_time=1),
+        )
+        self.next_slide()
+
+        # Place a box around the tilde O and then an arrow that says "up to log^4(d)"

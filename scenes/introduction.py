@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
 from manim import *
+from manim_slides.slide import Slide, ThreeDSlide
 from constants import *
 
 
-class Opening(Scene):
+class Opening(Slide):
     def construct(self):
         title = Tex(r"How to Escape Saddle Points Efficiently", color=BLUE)
         subtitle_1 = Tex(r"[JGNKN '17]")
@@ -17,10 +18,10 @@ class Opening(Scene):
             Wait(1),
             FadeIn(subtitle_2, shift=UP, run_time=3),
         )
-        self.wait()
+        self.next_slide()
 
 
-class GradientDescentIntro(Scene):
+class GradientDescentIntro(Slide):
     def construct(self):
         Tex.set_default(font_size=DEFINITION_FONT_SIZE)
 
@@ -38,9 +39,9 @@ class GradientDescentIntro(Scene):
         vertical_group = VGroup(header_group).to_edge(LEFT).to_edge(UP)
 
         self.play(Write(definition_name, run_time=2))
-        self.play(Wait(2))
+        self.next_slide()
         self.play(Write(definition_given_f, run_time=1.5))
-        self.play(Wait(5))
+        self.next_slide()
 
         equation_0 = MathTex(
             r"x_1 = x_0 - ",
@@ -84,11 +85,11 @@ class GradientDescentIntro(Scene):
         group.arrange(DOWN, center=False, aligned_edge=LEFT, buff=0.5)
         group.move_to((0, -2, 0))
         self.play(Write(goal_text), run_time=3)
-        self.play(Wait(3))
+        self.next_slide()
         self.play(Write(question_1), run_time=3)
-        self.play(Wait(3))
+        self.next_slide()
         self.play(Write(question_2), run_time=3)
-        self.play(Wait(3))
+        self.next_slide()
 
         # Surround rectangle around "local minima"
         local_minima_surrounding_rectangle = SurroundingRectangle(
@@ -111,12 +112,10 @@ class GradientDescentIntro(Scene):
         goal_text_updated.move_to(goal_text)
 
         self.play(Transform(goal_text, goal_text_updated), run_time=3)
-        self.play(Wait(3))
-
-        self.wait()
+        self.next_slide()
 
 
-class GradientDescentDemo(ThreeDScene):
+class GradientDescentDemo(ThreeDSlide):
     def construct(self):
         axes = ThreeDAxes()
         x_label = axes.get_x_axis_label(Tex("x"))
@@ -131,8 +130,9 @@ class GradientDescentDemo(ThreeDScene):
 
         # Write the text as an overlay in the 3D scene
         self.play(Write(f_text))
-        self.play(Wait(3))
+        self.next_slide()
         self.play(f_text.animate.to_corner(UL))
+        self.next_slide()
 
         X_SCALE = 10
         Y_SCALE = 10
@@ -147,10 +147,10 @@ class GradientDescentDemo(ThreeDScene):
         )
         self.play(FadeIn(f_surface))
 
-        self.wait(5)
+        self.next_slide()
 
 
-class PreviousWork(Scene):
+class PreviousWork(Slide):
     def construct(self):
         algorithm_text = Tex(r"Algorithm", color=BLUE, font_size=DEFINITION_FONT_SIZE)
         iteration_text = Tex(r"Iteration", color=BLUE, font_size=DEFINITION_FONT_SIZE)
@@ -214,7 +214,7 @@ class PreviousWork(Scene):
             Write(oracle_text, run_time=2),
         )
 
-        self.wait(4)
+        self.next_slide()
 
         def play_index(algorithm_index):
             self.play(
@@ -224,30 +224,30 @@ class PreviousWork(Scene):
             )
 
         play_index(0)
-        self.wait(2)
+        self.next_slide()
 
         play_index(1)
-        self.wait(2)
+        self.next_slide()
 
         play_index(5)
         play_index(6)
-        self.wait(5)
+        self.next_slide()
 
         play_index(3)
         play_index(4)
-        self.wait(4)
+        self.next_slide()
 
         # TODO: Add some visual details about the hessian vector product
         play_index(2)
-        self.wait(4)
+        self.next_slide()
 
         # Put a surrounding rectangle around the number of iterations
         rectangle = SurroundingRectangle(algorithms_grouped[2][1][1], color=YELLOW)
         self.play(Create(rectangle), run_time=1)
-        self.wait(5)
+        self.next_slide()
 
         self.play(FadeOut(rectangle), run_time=1)
-        self.wait(1)
+        self.next_slide()
 
         # Highlight the rows for this work and the Carmon and Duchi paper
         self.play(
@@ -258,10 +258,10 @@ class PreviousWork(Scene):
             algorithms_grouped[5][1].animate.set_color(GREEN),
             algorithms_grouped[5][2].animate.set_color(GREEN),
         )
-        self.wait(4)
+        self.next_slide()
 
 
-class Outline(Scene):
+class Outline(Slide):
     def construct(self):
         title = Tex(r"Outline", color=BLUE, font_size=HEADER_FONT_SIZE)
 
@@ -279,13 +279,11 @@ class Outline(Scene):
 
         for i, section in enumerate(sections):
             self.play(Write(section, run_time=1.5))
-            self.play(Wait(3))
+            self.next_slide()
 
             if i == 0:
                 self.play(sections[0].animate.set_color(YELLOW))
-                self.play(Wait(3))
-
-        self.wait(5)
+                self.next_slide()
 
         # Make a surrounding rectangle for the Background section
         background_surrounding_rectangle = SurroundingRectangle(
@@ -298,22 +296,4 @@ class Outline(Scene):
         )
         self.play(FadeOut(background_surrounding_rectangle), run_time=1)
 
-        self.wait()
-
-
-class Introduction(Scene):
-    def construct(self):
-        Opening.construct(self)
-        self.clear()
-        GradientDescentIntro.construct(self)
-
-        self.clear()
-        GradientDescentDemo().construct()
-
-        self.clear()
-        PreviousWork.construct(self)
-
-        self.clear()
-        Outline.construct(self)
-
-        self.wait(2)
+        self.next_slide()
