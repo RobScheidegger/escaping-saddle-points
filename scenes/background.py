@@ -71,7 +71,7 @@ class LSG(Slide):
         """
         Slides for both l-gradient lipschitz and strongly convex.
         """
-        l_definition = get_definition(r"$\ell$-gradient Lipschitz")
+        l_definition = get_definition(r"$\ell$-gradient Lipschitz/$\ell$-smooth")
 
         self.play(Write(l_definition, run_time=2))
         self.next_slide()
@@ -169,7 +169,7 @@ class LSG(Slide):
 
         theorem_1_text = (
             Tex(
-                r"For $f$ $l$-smooth and $\alpha$-strongly convex, gradient descent will be $\epsilon$-close to the optimal solution in iterations:",
+                r"For $f$ $\ell$-smooth and $\alpha$-strongly convex, gradient descent will be $\epsilon$-close to the optimal solution in iterations:",
                 tex_environment=None,
             )
             .next_to(theorem_1_header, DOWN, buff=0.5)
@@ -233,14 +233,14 @@ class GoldStandard(Slide):
 
         theorem_2_statement = Tex(
             r"For $f: \mathbb{R}^d \to \mathbb{R}$ ",
-            "$l$-smooth"
+            "$\ell$-smooth"
             r"""
-            , and some $\epsilon > 0$, gradient descent with $\eta = \frac{1}{l}$ will find an $\epsilon$-first order stationary point in iterations:
+            , and some $\epsilon > 0$, gradient descent with $\eta = \frac{1}{\ell}$ will find an $\epsilon$-first order stationary point in iterations:
             """,
             tex_environment=None,
         )
 
-        theorem_2_eq = MathTex(r"\frac{l(f(\mathbf{x_0}) - f^*)}{\epsilon^2}")
+        theorem_2_eq = MathTex(r"\frac{\ell(f(\mathbf{x_0}) - f^*)}{\epsilon^2}")
 
         self.play(Write(theorem_2, run_time=2))
         self.play(theorem_2.animate.to_corner(UL))
@@ -339,7 +339,7 @@ class HessianLipschitz(Slide):
         self.next_slide()
 
         epsilon_second_order_stationary = Tex(
-            r"For such a point, we say that $\mathbf{x}$ is an $\epsilon$-second order stationary point if it is an $\epsilon$-first order stationary point and",
+            r"We say that a point $\mathbf{x}$ is an $\epsilon$-second order stationary point if it is an $\epsilon$-first order stationary point and",
             tex_environment=None,
         ).next_to(hessian_equation, DOWN, buff=0.5)
         stationary_math = MathTex(
@@ -369,7 +369,7 @@ class Goal(Slide):
     """
 
     def construct(self):
-        l_smooth = Tex(r"$\mathbf{\ell}$\textbf{-smooth}").move_to((-4.5, 2, 0))
+        l_smooth = Tex(r"$\mathbf{\ell}$\textbf{-smooth}").move_to((-4.5, 3, 0))
         l_smooth_circle = ellipse_around(l_smooth, YELLOW)
 
         self.play(Write(l_smooth, run_time=1), Create(l_smooth_circle, run_time=1))
@@ -378,9 +378,9 @@ class Goal(Slide):
         # Show Theorem 2
 
         theorem_2 = Tex(
-            r"\textbf{Convergence}:\\",
+            r"$\epsilon$\textbf{-second order}\\",
             r"$\frac{\ell(f(\mathbf{x_0}) - f^*)}{\epsilon^2}$",
-        ).move_to((-4.5, -2, 0))
+        ).move_to((-4.5, -1, 0))
         theorem_2_rectangle = rectangle_around(theorem_2, BLUE)
         theorem_2_arrow = Line(
             l_smooth_circle.get_bottom(),
@@ -395,7 +395,7 @@ class Goal(Slide):
         self.next_slide()
 
         strongly_convex = Tex(r"$\mathbf{\alpha}$\textbf{-strongly convex}").move_to(
-            (4.5, 2, 0)
+            (4.5, 3, 0)
         )
         strongly_convex_circle = ellipse_around(strongly_convex, YELLOW)
 
@@ -406,9 +406,9 @@ class Goal(Slide):
         self.next_slide()
 
         theorem_1 = Tex(
-            r"\textbf{Convergence}:\\",
+            r"\textbf{Minima}:\\",
             r"$\frac{2\ell}{\alpha} \log \frac{||x_0 - x^*||}{\epsilon}$",
-        ).move_to((4.5, -2, 0))
+        ).move_to((4.5, -1, 0))
         theorem_1_rectangle = rectangle_around(theorem_1, BLUE)
         theorem_1_arrow_1 = Line(
             strongly_convex_circle.get_bottom(),
@@ -428,7 +428,7 @@ class Goal(Slide):
         self.next_slide()
 
         hessian_lipschitz = Tex(r"$\mathbf{\rho}$\textbf{-Hessian Lipschitz}").move_to(
-            (0, 2, 0)
+            (0, 3, 0)
         )
         hessian_lipschitz_circle = ellipse_around(hessian_lipschitz, GREEN)
 
@@ -439,9 +439,9 @@ class Goal(Slide):
         self.next_slide()
 
         main_theorem = Tex(
-            r"\textbf{Convergence}:\\ $O\left (\log^4(d) \frac{\ell(f(x_0) - f^*)}{\epsilon^2} \right )$",
+            r"$\epsilon$\textbf{-second-order}:\\ $O\left (\log^4(d) \frac{\ell(f(x_0) - f^*)}{\epsilon^2} \right )$",
             font_size=DEFINITION_FONT_SIZE,
-        ).move_to((0, -2, 0))
+        ).move_to((0, -1, 0))
         main_theorem_rectangle = rectangle_around(main_theorem, GREEN)
 
         main_theorem_line_1 = Line(
@@ -461,4 +461,36 @@ class Goal(Slide):
         )
         self.next_slide()
 
-        # Place a box around the tilde O and then an arrow that says "up to log^4(d)"
+        saddle_assumption = Tex(r"$(\theta,\gamma,\zeta)$-strict saddle").move_to(
+            (-4.5, -3, 0)
+        )
+        saddle_circle = ellipse_around(saddle_assumption, GREEN)
+        saddle_minimum = Tex(
+            r"\textbf{Minima}:\\ $O\left (\log^4(d) \frac{\ell(f(x_0) - f^*)}{\epsilon^2} \right )$",
+            font_size=DEFINITION_FONT_SIZE,
+        ).move_to((0, -3, 0))
+        saddle_minimum_rectangle = rectangle_around(saddle_minimum, GREEN)
+
+        saddle_minimum_line_1 = Line(
+            saddle_circle.get_right(),
+            saddle_minimum_rectangle.get_left(),
+        )
+        saddle_minimum_line_2 = Line(
+            main_theorem_rectangle.get_bottom(),
+            saddle_minimum_rectangle.get_top(),
+        )
+
+        self.play(Write(saddle_assumption), Write(saddle_circle))
+        self.next_slide()
+
+        self.play(
+            Write(saddle_minimum),
+            Write(saddle_minimum_rectangle),
+            Create(saddle_minimum_line_1),
+            Create(saddle_minimum_line_2),
+        )
+        self.next_slide()
+
+        # Fade out entire slide
+        self.play(*[FadeOut(mob) for mob in self.mobjects])
+        self.next_slide()

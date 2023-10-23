@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from manim import *
 from manim_slides.slide import Slide, ThreeDSlide
 from constants import *
@@ -51,18 +49,22 @@ class GradientDescentIntro(Slide):
         )
 
         self.play(Write(equation_0), run_time=3)
+        self.next_slide()
 
         eta_surrounding_rectangle = SurroundingRectangle(equation_0[1], color=YELLOW)
-        self.play(Create(eta_surrounding_rectangle), run_time=3)
-        self.play(FadeOut(eta_surrounding_rectangle), run_time=3)
+        self.play(Create(eta_surrounding_rectangle), run_time=1)
+        self.next_slide()
+        self.play(FadeOut(eta_surrounding_rectangle), run_time=1)
+        self.next_slide()
 
         gradient_surrounding_rectangle = SurroundingRectangle(
             equation_0[2], color=YELLOW
         )
         self.play(Create(gradient_surrounding_rectangle), run_time=1.5)
+        self.next_slide()
         self.play(FadeOut(gradient_surrounding_rectangle), run_time=1.5)
+        self.next_slide()
 
-        self.play(Wait(4))
         equation_1 = MathTex(
             r"x_{t+1} = x_t - ",
             r"\eta",
@@ -70,12 +72,12 @@ class GradientDescentIntro(Slide):
         )
 
         self.play(Transform(equation_0, equation_1), run_time=3)
-        self.play(Wait(4))
+        self.next_slide()
 
         vertical_group.add(equation_1)
 
         goal_text = Tex(
-            r"Goal: Find a local minima of ",
+            r"Goal: Find a stationary point of ",
             r"$f(x)$ ",
             r"($\lVert f(x) \rVert = 0$).",
         )
@@ -92,21 +94,16 @@ class GradientDescentIntro(Slide):
         self.play(Write(question_2), run_time=3)
         self.next_slide()
 
-        # Surround rectangle around "local minima"
-        local_minima_surrounding_rectangle = SurroundingRectangle(
-            goal_text[1], color=YELLOW
-        )
-        self.play(Write(local_minima_surrounding_rectangle), run_time=1)
-        self.play(FadeOut(local_minima_surrounding_rectangle), run_time=1)
-
         gradient_surrounding_rectangle = SurroundingRectangle(
             goal_text[2], color=YELLOW
         )
         self.play(Create(gradient_surrounding_rectangle), run_time=1)
-        self.play(FadeOut(gradient_surrounding_rectangle), run_time=2)
+        self.next_slide()
+        self.play(FadeOut(gradient_surrounding_rectangle), run_time=1)
+        self.next_slide()
 
         goal_text_updated = Tex(
-            r"Goal: Find a local minima of ",
+            r"Goal: Find a stationary point of ",
             r"$f(x)$ ",
             r"($\lVert f(x) \rVert \leq \epsilon$).",
         )
@@ -297,7 +294,7 @@ class PreviousWork(Slide):
             ("Levy [2016]", [r"O(d^3 \cdot poly(1 / \epsilon))"], "Gradient"),
             (
                 r"\textbf{This Work}",
-                [r"\mathbf{O(", r"\log^4 (d)", r"/ \epsilon^2)}"],
+                [r"\mathbf{O}(", r"\mathbf{\log^4 (d)}", r"/ \mathbf{\epsilon^2})}"],
                 "Gradient",
             ),
             (
@@ -365,12 +362,13 @@ class PreviousWork(Slide):
         play_index(1)
         self.next_slide()
 
-        play_index(5)
         play_index(6)
+        play_index(7)
         self.next_slide()
 
         play_index(3)
         play_index(4)
+        play_index(5)
         self.next_slide()
 
         # TODO: Add some visual details about the hessian vector product
@@ -432,4 +430,6 @@ class Outline(Slide):
         )
         self.play(FadeOut(background_surrounding_rectangle), run_time=1)
 
+        self.next_slide()
+        self.play(*[FadeOut(mob) for mob in self.mobjects])
         self.next_slide()
