@@ -81,7 +81,7 @@ class PGD(Slide):
 
         pertubation_line_1 = (
             MathTex(
-                r"\tilde{\mathbf{x_t}} \leftarrow \mathbf{x_t}, t_{noise} \leftarrow t"
+                r"\mathbf{\tilde{x}_t}} \leftarrow \mathbf{x_t}, t_{noise} \leftarrow t"
             )
             .next_to(pertubation_condition, DOWN, buff=0.25)
             .align_to(pertubation_condition, LEFT)
@@ -89,7 +89,7 @@ class PGD(Slide):
         )
         pertubation_line_2 = (
             MathTex(
-                r"\tilde{\mathbf{x_t}} \leftarrow \mathbf{x_t} + \xi_t,",
+                r"\mathbf{\tilde{x}_t}} \leftarrow \mathbf{x_t} + \xi_t,",
                 r"\xi_t \leftarrow \mathbb{B}_0(r)",
             )
             .next_to(pertubation_line_1, DOWN, buff=0.25)
@@ -107,14 +107,14 @@ class PGD(Slide):
 
         termination_condition = (
             Tex(
-                r"If $t - t_{noise} = t_{thres}$ and $f(\mathbf{x_t}) - f(\tilde{\mathbf{x_t}}) > -f_{thres}$ then:"
+                r"If $t - t_{noise} = t_{thres}$ and $f(\mathbf{x_t}) - f(\mathbf{\tilde{x}_t}}) > -f_{thres}$ then:"
             )
             .next_to(pertubation_group, DOWN, buff=0.25)
             .align_to(pertubation_group, LEFT)
         )
 
         termination_return = (
-            Tex(r"Return $\tilde{\mathbf{x_{t_{noise}}}}$")
+            Tex(r"Return $\mathbf{\tilde{x}_{t_{noise}}}$")
             .next_to(termination_condition, DOWN, buff=0.25)
             .align_to(termination_condition, LEFT)
             .shift(RIGHT * INDENT_WIDTH)
@@ -221,7 +221,7 @@ class Theorem3(Slide):
 
         # Place a bracket around the gold standard runtime
         gold_standard_bracket = Brace(theorem_3_iterations[1], DOWN, color=YELLOW)
-        gold_standard_text = Tex("\textbf{Gold Standard}", color=YELLOW).next_to(
+        gold_standard_text = Tex(r"\textbf{Gold Standard}", color=YELLOW).next_to(
             gold_standard_bracket, DOWN, buff=0.25
         )
 
@@ -230,8 +230,8 @@ class Theorem3(Slide):
 
         # Place another bracket around the new log factor
         new_log_factor_bracket = Brace(theorem_3_iterations[2], DOWN, color=GREEN)
-        new_log_factor_text = Tex("\textbf{New Log Factor}", color=GREEN).next_to(
-            new_log_factor_bracket, DOWN, buff=0.25
+        new_log_factor_text = Tex(r"\textbf{New Log Factor}", color=GREEN).next_to(
+            new_log_factor_bracket, DOWN, buff=1
         )
 
         self.play(Write(new_log_factor_bracket), Write(new_log_factor_text), run_time=2)
@@ -343,7 +343,7 @@ class Theorem3ProofSketch(Slide):
 
         saddle_idea = (
             Tex(
-                r"Idea: When adding pertubation $\eta_t \leftarrow \mathbb{B}_0(r)$, we want to \textit{make progress away from the saddle point} with high probability.",
+                r"Idea: When adding pertubation $\xi_t \leftarrow \mathbb{B}_0(r)$, we want to \textit{make progress away from the saddle point} with high probability.",
                 tex_environment=None,
             )
             .next_to(cases_2, DOWN, buff=0.25)
@@ -426,7 +426,8 @@ class PertubationBall(ThreeDSlide):
             v_range=[0, BALL_RADIUS],
             fill_opacity=0.2,
             fill_color=RED,
-            color=RED,
+            stroke_color=RED,
+            checkerboard_colors=None,
         )
 
         stuck_surface_top = stuck_surface_bottom.copy().shift(OUT * 0.2)
@@ -634,8 +635,12 @@ class Corollary4(Slide):
         self.next_slide()
 
         final_result = Tex(
-            r"\textbf{Strict Saddle} $\implies$ \textbf{PGD finds \textit{Local Minimum}}!", color=GREEN
+            r"\textbf{Strict Saddle} $\implies$ \textbf{PGD finds \textit{Local Minimum}}!",
+            color=GREEN,
         ).move_to((0, -2, 0))
-        
+
         self.play(Write(final_result))
+        self.next_slide()
+
+        self.play(*[FadeOut(mob) for mob in self.mobjects])
         self.next_slide()
