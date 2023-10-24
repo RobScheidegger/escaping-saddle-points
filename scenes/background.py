@@ -89,7 +89,7 @@ class LSG(Slide):
 
         l_equation = MathTex(
             r"\forall \mathbf{x_1}, \mathbf{x_2}, \ ",
-            r"||\nabla f(\mathbf{x_1}) - \nabla f(\mathbf{x_2})|| \leq l ||\mathbf{x_1} - \mathbf{x_2}||",
+            r"||\nabla f(\mathbf{x_1}) - \nabla f(\mathbf{x_2})|| \leq \ell ||\mathbf{x_1} - \mathbf{x_2}||",
         )
 
         self.play(Write(l_equation, run_time=2))
@@ -378,7 +378,7 @@ class Goal(Slide):
         # Show Theorem 2
 
         theorem_2 = Tex(
-            r"$\epsilon$\textbf{-second order}\\",
+            r"$\epsilon$\textbf{-first order}\\",
             r"$\frac{\ell(f(\mathbf{x_0}) - f^*)}{\epsilon^2}$",
         ).move_to((-4.5, -1, 0))
         theorem_2_rectangle = rectangle_around(theorem_2, BLUE)

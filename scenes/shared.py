@@ -51,7 +51,7 @@ def render_outline(self: Slide, old_section: str, new_section: str):
 
     group = VGroup(*([title] + sections)).to_edge(LEFT).to_edge(UP)
 
-    group.arrange(DOWN, center=False, aligned_edge=LEFT, buff=1)
+    group.arrange(DOWN, center=False, aligned_edge=LEFT, buff=0.8)
 
     self.play(Write(group, run_time=2))
     self.next_slide()
